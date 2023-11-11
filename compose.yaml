@@ -1,7 +1,9 @@
 services:
 
   web:
-    build: .
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
     command: >
       sh -c "
       until python manage.py dbcheck; do
