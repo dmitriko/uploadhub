@@ -3,32 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>UploadHub</title>
-    <!-- Include Pico.css -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .file-upload-container {
+            margin-bottom: 2rem;
+        }
+        .uploaded-files-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .uploaded-file-item {
+            margin-bottom: 0.5rem;
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+        }
+        .uploaded-file-item button {
+            margin-left: 1rem;
+        }
+    </style>
+    <script>
+        function confirmDelete(fileName) {
+            return confirm('Are you sure you want to delete "' + fileName + '"?');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>File Upload</h1>
-        <form method="post" enctype="multipart/form-data" class="form-group">
-            {% csrf_token %}
-            <input type="file" name="file" class="input">
-            <button type="submit" class="button primary">Upload</button>
-        </form>
-    
+        <div class="file-upload-container">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="file" class="input" required>
+                <button type="submit" class="button primary">Upload</button>
+            </form>
+        </div>
+
         <h2>Uploaded Files</h2>
-        <ul>
-            {% for file in files %}
-                <li>
-                    {{ file.original_name }}
-                    <!-- Delete button -->
-                    <form action="{% url 'delete_file' file.unique_id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="button">Delete</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
+        <table class="uploaded-files-list">
+   
+            <tbody>
+                {% for file in files %}
+                    <tr class="uploaded-file-item">
+                        <td>{{ file.original_name }}</td>
+                        <td>
+                            <form action="{% url 'delete_file' file.unique_id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="button small" onclick="return confirmDelete('{{ file.original_name }}');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
     </div>
-    
 </body>
 </html>
