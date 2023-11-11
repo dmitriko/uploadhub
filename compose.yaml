@@ -1,4 +1,5 @@
 services:
+
   web:
     build: .
     command: >
@@ -21,6 +22,7 @@ services:
       - AWS_STORAGE_BUCKET_NAME=some-bucket-name
       - AWS_S3_ENDPOINT_URL=http://minio:9000
       - AWS_S3_REGION_NAME=us-east-1
+
   db:
     image: postgres:latest
     volumes:
@@ -29,11 +31,19 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
+
   minio:
-    image: minio/minio:latest
+    image: docker.io/bitnami/minio:2023
+    ports:
+      - '9000:9000'
+      - '9001:9001'
     volumes:
-      - ./.data/minio_data:/data
+      - 'minio_data:/bitnami/minio/data'
     environment:
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin
-    command: server /data
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DEFAULT_BUCKETS=some-bucket-name
+
+volumes:
+  minio_data:
+    driver: local
