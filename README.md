@@ -1,7 +1,7 @@
 # UploadHub
 
 ## Overview
-UploadHub is a minimalistic Django application designed for uploading files to an S3-compatible storage service. It provides a simple web interface for uploading files and handles each file with a unique identifier to avoid conflicts. The app also supports password-protected access and is Kubernetes-ready, making it ideal for DevOps practices and learning.
+UploadHub is a minimalistic Django application designed for uploading files to an S3-compatible storage service. It provides a simple web interface for uploading files and handles each file with a unique identifier to avoid conflicts. The app also supports password-protected access. It will be a bit of a challenge to put it to Kubernetes. Thus it is a perfect app to exersice our DevOps skills.
 
 ## Features
 - File upload to S3 with unique UUIDs for each file.
