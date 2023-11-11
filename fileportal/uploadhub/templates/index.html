@@ -47,6 +47,9 @@
                     <tr class="uploaded-file-item">
                         <td>{{ file.original_name }}</td>
                         <td>
+                            <a href="{% url 'download_file' file.unique_id %}" class="button small">Download</a>
+                        </td>
+                        <td>
                             <form action="{% url 'delete_file' file.unique_id %}" method="post" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="button small" onclick="return confirmDelete('{{ file.original_name }}');">Delete</button>
