@@ -14,19 +14,22 @@ from .models import UploadedFile
 
 
 def index(request):
-    if request.method == 'POST' and request.FILES['file']:
-        file = request.FILES['file']
-        unique_id = uuid.uuid4()
-        file_name = f"{unique_id}"
-        content_type = file.content_type
+    if request.method == 'POST' and request.FILES.getlist('files'):
+        for file in request.FILES.getlist('files'):
+            unique_id = uuid.uuid4()
+            file_name = f"{unique_id}"
+            content_type = file.content_type
 
-        # Save file to S3
-        default_storage.save(file_name, file)
+            # Save file to S3
+            default_storage.save(file_name, file)
 
-        # Save file details to the database
-        UploadedFile.objects.create(original_name=file.name, unique_id=unique_id, content_type=content_type)
+            # Save file details to the database
+            UploadedFile.objects.create(
+                original_name=file.name,
+                unique_id=unique_id,
+                content_type=content_type
+            )
 
-    # Fetch list of files from the database
     files = UploadedFile.objects.all()
     return render(request, 'index.html', {'files': files})
 
@@ -71,7 +74,7 @@ def download_file(request, unique_id):
                                          ExpiresIn=100)
     if 'minio' in file_url:
         file_url = file_url.replace('http://minio', 'http://localhost')
-    
+
     # Redirect to the presigned URL to initiate the file download
     response = HttpResponseRedirect(file_url)
     response['Content-Disposition'] = f'attachment; filename="{file_to_download.original_name}"'

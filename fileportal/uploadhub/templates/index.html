@@ -31,13 +31,12 @@
 <body>
     <div class="container">
         <h1>File Upload</h1>
-        <div class="file-upload-container">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="file" name="file" class="input" required>
-                <button type="submit" class="button primary">Upload</button>
-            </form>
-        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="files" multiple class="input">
+            <button type="submit" class="button primary">Upload</button>
+        </form>
+        
 
         <h2>Uploaded Files</h2>
         <table class="uploaded-files-list">
@@ -45,10 +44,7 @@
             <tbody>
                 {% for file in files %}
                     <tr class="uploaded-file-item">
-                        <td>{{ file.original_name }}</td>
-                        <td>
-                            <a href="{% url 'download_file' file.unique_id %}" class="button small">Download</a>
-                        </td>
+                        <td><a href="{% url 'download_file' file.unique_id %}" class="button small">{{ file.original_name }}</a></td>
                         <td>
                             <form action="{% url 'delete_file' file.unique_id %}" method="post" style="display: inline;">
                                 {% csrf_token %}
