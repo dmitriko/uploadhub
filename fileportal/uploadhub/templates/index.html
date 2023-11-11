@@ -1,16 +1,34 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>UploadHub</title>
+    <!-- Include Pico.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
 </head>
 <body>
-    <h1>File Upload</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="file">
-        <button type="submit">Upload</button>
-    </form>
+    <div class="container">
+        <h1>File Upload</h1>
+        <form method="post" enctype="multipart/form-data" class="form-group">
+            {% csrf_token %}
+            <input type="file" name="file" class="input">
+            <button type="submit" class="button primary">Upload</button>
+        </form>
+    
+        <h2>Uploaded Files</h2>
+        <ul>
+            {% for file in files %}
+                <li>
+                    {{ file.original_name }}
+                    <!-- Delete button -->
+                    <form action="{% url 'delete_file' file.unique_id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="button">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
 </body>
 </html>

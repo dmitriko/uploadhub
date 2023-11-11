@@ -22,5 +22,5 @@ from uploadhub import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('admin/', admin.site.urls),
-    
+    path('delete/<uuid:unique_id>/', views.delete_file, name='delete_file'),   
 ]

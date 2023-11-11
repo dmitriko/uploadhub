@@ -5,15 +5,14 @@ from django.db.utils import OperationalError
 class Command(BaseCommand):
     help = 'Checks database availability'
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **options):
         db_conn = None
         try:
             db_conn = connections['default']
-            c = db_conn.cursor()
+            db_conn.cursor()
         except OperationalError:
             self.stdout.write('Database unavailable, waiting 1 second...')
-            return 1  # Non-zero exit code to signal failure
+            return 1  # Return a non-zero exit code to indicate failure
         else:
             self.stdout.write(self.style.SUCCESS('Database is available'))
-            c.close()
-            return 0
+            return 0  # Return zero to indicate success
