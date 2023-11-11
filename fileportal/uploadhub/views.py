@@ -11,8 +11,10 @@ from django.http import HttpResponseRedirect, FileResponse, Http404
 from django.urls import reverse
 
 from .models import UploadedFile 
+from .decorators import password_protected_view
 
 
+@password_protected_view
 def index(request):
     if request.method == 'POST' and request.FILES.getlist('files'):
         for file in request.FILES.getlist('files'):
@@ -34,6 +36,7 @@ def index(request):
     return render(request, 'index.html', {'files': files})
 
 
+@password_protected_view
 def delete_file(request, unique_id):
     if request.method == 'POST':
         file_to_delete = UploadedFile.objects.get(unique_id=unique_id)
@@ -59,6 +62,7 @@ def _get_s3_client():
     return s3
 
 
+@password_protected_view
 def download_file(request, unique_id):
     try:
         file_to_download = UploadedFile.objects.get(unique_id=unique_id)
