@@ -7,3 +7,4 @@ class UploadedFile(models.Model):
     unique_id = models.UUIDField(default=uuid.uuid4, 
                                  editable=False, 
                                  unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)

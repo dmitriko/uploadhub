@@ -32,7 +32,7 @@ def index(request):
                 content_type=content_type
             )
 
-    files = UploadedFile.objects.all()
+    files = UploadedFile.objects.all().order_by('-created_at')
     return render(request, 'index.html', {'files': files})
 
 
