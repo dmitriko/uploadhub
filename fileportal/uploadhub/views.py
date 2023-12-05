@@ -13,6 +13,7 @@ from django.urls import reverse
 from .models import UploadedFile 
 from .decorators import password_protected_view
 
+USE_MINIO = os.environ.get('USE_MINIO', 'False').lower() == 'true'
 
 @password_protected_view
 def index(request):
@@ -50,7 +51,7 @@ def delete_file(request, unique_id):
 
 def _get_s3_client():
     s3_client_kwargs = {}
-    if os.environ.get('USE_MINIO', 'False').lower() == 'true':
+    if USE_MINIO:
         logging.info('Using MinIO')
         s3_client_kwargs['endpoint_url'] = os.environ['AWS_S3_ENDPOINT_URL']
         s3_client_kwargs['aws_access_key_id'] = os.environ['AWS_ACCESS_KEY_ID']
@@ -71,7 +72,16 @@ def download_file(request, unique_id):
 
     s3 = _get_s3_client()
     bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-
+    if USE_MINIO:
+        # we just fetch content from Minio server and return it
+        conent = s3.get_object(Bucket=bucket_name, 
+                               Key=str(file_to_download.unique_id))['Body'].read()
+        response = FileResponse(conent)
+        response['Content-Disposition'] = f'attachment; filename="{file_to_download.original_name}"'
+        response['Content-Type'] = file_to_download.content_type
+        return response
+    
+    # else return persigned url
     file_url = s3.generate_presigned_url('get_object',
                                          Params={'Bucket': bucket_name,
                                                  'Key': str(file_to_download.unique_id)},
